@@ -120,7 +120,7 @@ function buildLadderSteps(count: number, lines: LadderLine[], startIndex: number
 
   const FIRST_STEP_OFFSET = 12
   const rowGap = count === 1 ? 0 : (LADDER_BOTTOM - LADDER_TOP) / (count - 1)
-  const colGap = LADDER_ROWS === 1 ? 0 : (LADDER_RIGHT - (LADDER_START_X + FIRST_STEP_OFFSET)) / LADDER_ROWS
+  const colGap = (LADDER_RIGHT - (LADDER_START_X + FIRST_STEP_OFFSET)) / LADDER_ROWS
 
   const steps: LadderStep[] = []
   let currentRow = startIndex
