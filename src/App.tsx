@@ -265,29 +265,38 @@ export default function App() {
   }
 
   const spin = () => {
-    if (isSpinning || items.length < 2) return
-    if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
+  if (isSpinning || items.length < 2) return
+  if (timeoutRef.current) window.clearTimeout(timeoutRef.current)
 
-    const winnerIndex = Math.floor(Math.random() * items.length)
-    const segmentStart = winnerIndex * segmentAngle
-    const margin = Math.min(12, segmentAngle * 0.18)
-    const randomInsideSegment = segmentStart + margin + Math.random() * Math.max(segmentAngle - margin * 2, segmentAngle * 0.2)
-    const currentNormalized = ((rotation % 360) + 360) % 360
-    const targetNormalized = (POINTER_ANGLE - randomInsideSegment + 360) % 360
-    let delta = (targetNormalized - currentNormalized + 360) % 360
-    if (delta < 180) delta += 360
-    const extraTurns = 360 * (4 + Math.random() * 5)
-    const nextRotation = rotation + extraTurns + delta
+  const winnerIndex = Math.floor(Math.random() * items.length)
+  const segmentStart = winnerIndex * segmentAngle
+  const margin = Math.min(12, segmentAngle * 0.18)
+  const randomInsideSegment =
+    segmentStart + margin + Math.random() * Math.max(segmentAngle - margin * 2, segmentAngle * 0.2)
 
-    setIsSpinning(true)
-    setResult('')
-    setRotation(nextRotation)
-    timeoutRef.current = window.setTimeout(() => {
-      setResult(items[winnerIndex].label)
-      setIsSpinning(false)
-      timeoutRef.current = null
-    }, spinDuration)
-  }
+  const currentNormalized = ((rotation % 360) + 360) % 360
+  const targetNormalized = (POINTER_ANGLE - randomInsideSegment + 360) % 360
+
+  let delta = (targetNormalized - currentNormalized + 360) % 360
+  if (delta < 180) delta += 360
+
+  const extraTurns = 360 * (4 + Math.random() * 5)
+  const nextRotation = rotation + extraTurns + delta
+
+  setIsSpinning(true)
+  setResult('')
+  setRotation(nextRotation)
+
+  timeoutRef.current = window.setTimeout(() => {
+    const finalRotation = ((nextRotation % 360) + 360) % 360
+    const pointerAngleOnWheel = (((POINTER_ANGLE - finalRotation + 360) % 360) + 0.0001) % 360
+    const finalIndex = Math.floor(pointerAngleOnWheel / segmentAngle) % items.length
+
+    setResult(items[finalIndex].label)
+    setIsSpinning(false)
+    timeoutRef.current = null
+  }, spinDuration)
+}
 
   const regenerateLadder = () => {
     setLadderLines(generateLadderLines(items.length))
